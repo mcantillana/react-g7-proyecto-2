@@ -46,15 +46,15 @@ export const logout = () => {
 //     return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
 // }
 
-// function register(user) {
-//     const requestOptions = {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify(user)
-//     };
+export const register = user => {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user)
+    };
 
-//     return fetch(`${config.apiUrl}/users/register`, requestOptions).then(handleResponse);
-// }
+    return fetch(`${config.apiUrl}/users/register`, requestOptions).then(handleResponse);
+}
 
 // function update(user) {
 //     const requestOptions = {
@@ -83,7 +83,7 @@ function handleResponse(response) {
             if (response.status === 401) {
                 // auto logout if 401 response returned from api
                 logout();
-                // location.reload(true);
+                // window.location.reload(true);
             }
 
             const error = (data && data.message) || response.statusText;
