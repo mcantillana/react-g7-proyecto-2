@@ -31,7 +31,7 @@ const EpisodesPage = props => {
             setLoadmore(more)
         }
 
-    })
+    }, [loadmore])
 
     const handlerLoadMore = event => {
         event.preventDefault();
@@ -42,6 +42,7 @@ const EpisodesPage = props => {
         } 
         
     }
+    console.log(props.users)
 
     return (
        <Layout>
@@ -75,8 +76,7 @@ const EpisodesPage = props => {
 }
 
 
-const mapStateToProps = GlobalState => GlobalState.episodes
-
+const mapStateToProps = state => state.episodes
 
 const mapDispatchToProps = dispatch => ({
     getEpisodes: payload => dispatch(getEpisodesAction(payload))

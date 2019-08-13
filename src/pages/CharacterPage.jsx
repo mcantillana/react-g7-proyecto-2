@@ -30,7 +30,7 @@ const CharactersPage = props => {
             setLoadmore(more)
         }
 
-    })
+    }, [loadmore])
 
     const handlerLoadMore = event => {
         event.preventDefault();

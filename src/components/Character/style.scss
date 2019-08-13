@@ -3,4 +3,12 @@
     a { color: black; }
     ul { padding-left: 1rem }
     .card-title { min-height: 50px }
+
+    .wishlist {
+        color: #999;
+        &:hover {
+            color: #333;
+        }
+    }
 }
+

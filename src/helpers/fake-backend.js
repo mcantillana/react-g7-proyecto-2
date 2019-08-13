@@ -59,7 +59,12 @@ export function configureFakeBackend() {
                         let id = parseInt(urlParts[urlParts.length - 1]);
                         let matchedUsers = users.filter(user => { return user.id === id; });
                         let user = matchedUsers.length ? matchedUsers[0] : null;
-
+                        
+                        user = {
+                            "favoriteCharacters": user.favoriteCharacters,
+                            "favoriteEpisodes": user.favoriteEpisodes,
+                            "id": user.id,
+                        }
                         // respond 200 OK with user
                         resolve({ ok: true, text: () => JSON.stringify(user)});
                     } else {
@@ -74,7 +79,7 @@ export function configureFakeBackend() {
                 if (url.endsWith('/users/register') && opts.method === 'POST') {
                     // get new user object from post body
                     let newUser = JSON.parse(opts.body);
-
+                    
                     // validation
                     let duplicateUser = users.filter(user => { return user.username === newUser.username; }).length;
                     if (duplicateUser) {
@@ -86,12 +91,119 @@ export function configureFakeBackend() {
                     newUser.id = users.length ? Math.max(...users.map(user => user.id)) + 1 : 1;
                     users.push(newUser);
                     localStorage.setItem('users', JSON.stringify(users));
-
+                    
                     // respond 200 OK
                     resolve({ ok: true, text: () => Promise.resolve() });
 
                     return;
                 }
+
+
+                // add favorite episode 
+                if (url.endsWith('/user/episode/favorite') && opts.method === 'POST') {
+                    // console.log('body: ', opts.body)
+
+                    // get new user object from post body
+                    let payload = opts.body;
+                   
+                    for (let i = 0; i < users.length; i++) {
+
+                        if (payload.user_id === users[i].id) {
+                            
+                            if (users[i].favoriteEpisodes.includes(payload.episode_id) === false) {
+                                users[i].favoriteEpisodes.push(
+                                    payload.episode_id
+                                )
+                            }
+
+                        }
+                    }
+
+                    localStorage.setItem('users', JSON.stringify(users))
+                    
+                    // respond 200 OK
+                    resolve({ ok: true, text: () => Promise.resolve() });
+
+                    return;
+                }
+
+
+                // add favorite episode 
+                if (url.endsWith('/user/episode/favorite') && opts.method === 'DELETE') {
+
+                    // get new user object from post body
+                    let payload = opts.body;
+
+                    for (let i = 0; i < users.length; i++) {
+
+                        if (payload.user_id === users[i].id) {
+                            users[i].favoriteEpisodes = users[i].favoriteEpisodes.filter(favorite =>
+                                favorite !== payload.episode_id
+                            )
+                        }
+                    }
+
+                    localStorage.setItem('users', JSON.stringify(users))
+                    
+                    // respond 200 OK
+                    resolve({ ok: true, text: () => Promise.resolve() });
+
+                    return;
+                }
+
+
+                // add favorite episode 
+                if (url.endsWith('/user/character/favorite') && opts.method === 'POST') {
+                    // console.log('body: ', opts.body)
+
+                    // get new user object from post body
+                    let payload = opts.body;
+                   
+                    for (let i = 0; i < users.length; i++) {
+
+                        if (payload.user_id === users[i].id) {
+                            
+                            if (users[i].favoriteCharacters.includes(payload.episode_id) === false) {
+                                users[i].favoriteCharacters.push(
+                                    payload.character_id
+                                )
+                            }
+
+                        }
+                    }
+
+                    localStorage.setItem('users', JSON.stringify(users))
+                    
+                    // respond 200 OK
+                    resolve({ ok: true, text: () => Promise.resolve() });
+
+                    return;
+                }
+
+
+                // add favorite episode 
+                if (url.endsWith('/user/character/favorite') && opts.method === 'DELETE') {
+
+                    // get new user object from post body
+                    let payload = opts.body;
+
+                    for (let i = 0; i < users.length; i++) {
+
+                        if (payload.user_id === users[i].id) {
+                            users[i].favoriteCharacters = users[i].favoriteCharacters.filter(favorite =>
+                                favorite !== payload.character_id
+                            )
+                        }
+                    }
+
+                    localStorage.setItem('users', JSON.stringify(users))
+                    
+                    // respond 200 OK
+                    resolve({ ok: true, text: () => Promise.resolve() });
+
+                    return;
+                }
+
 
                 // delete user
                 if (url.match(/\/users\/\d+$/) && opts.method === 'DELETE') {

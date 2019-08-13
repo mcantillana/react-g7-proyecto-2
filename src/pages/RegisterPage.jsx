@@ -1,59 +1,114 @@
 import React, { Fragment, useState } from 'react';
 import { Redirect, Link } from 'react-router-dom';
+import {Form, Button, Alert } from 'react-bootstrap';
+import { registerAction } from '../store/registration/action';
+import { connect } from 'react-redux';
+import { Spinner } from '../components/Spinner';
+
 import '../assets/scss/login.scss';
+import logo from '../assets/images/Rick_and_Morty.svg';
 
+const RegisterPage = props => {
 
-export const RegisterPage = props => {
+    const [ validated, setValidated ] = useState(false);
 
-    const [ redirect, setRedirect ] = useState(false);
+    const [ form, setForm ] = useState({
+      name: '',
+      username: '',
+      email: '',
+      password: '',
+      favoriteEpisodes: [],
+      favoriteCharacters: []
+    })
 
-    const handlerOnSubmit = event => {
-
-      event.preventDefault();
-
-      setRedirect(true);
+    const handlerOnChange = ({target}) => {
+        const { name, value } = target;
+        setForm({
+          ...form,
+          [name]: value
+        })
     }
 
-    if (redirect) {
-      return <Redirect to="/dashboard" />
+
+    const handleOnSubmit = event => {
+        event.preventDefault();
+
+        const { currentTarget } = event;
+        // const { username, password } = form;
+          
+        
+        
+        if (currentTarget.checkValidity()) {
+            // console.log('valid register success')
+            // console.log('register', form);
+            props.register(form);
+        }
+        setValidated(true);
     }
 
+    if (props.valid_register) {
+      return <Redirect to="/" />
+    }
+
+    // console.log(props)
     return(
         <Fragment>
-            <form class="form-signin" onSubmit={handlerOnSubmit}>
-              <div class="text-center mb-4">
-
-                <img class="mb-4" src="https://desafiolatam.com/assets/home/logo-academia-bla-790873cdf66b0e681dfbe640ace8a602f5330bec301c409744c358330e823ae3.png" alt=""  height="40" />
-                
-                <h1 class="h3 mb-3 font-weight-normal">Register Form</h1>                
-              </div>
-                
-                <div class="form-label-group">
-                  <input type="username" id="username" class="form-control" placeholder="name" required autofocus />
-                  <label for="name">Name</label>
-                </div>
-
-              <div class="form-label-group">
-                <input type="username" id="username" class="form-control" placeholder="Username" required  />
-                <label for="username">Username</label>
-              </div>
-
-              <div class="form-label-group">
-                <input type="password" id="password" class="form-control" placeholder="Password" required />
-                <label for="password">Password</label>
-              </div>
-
-              <div class="checkbox mb-3">
-    
-              </div>
-              <button class="btn btn-lg btn-primary btn-block" type="submit">Create Account</button>
-              <span>¿Ya posees una cuenta? <Link to="/">Imgresa acá</Link></span>
-
-              <p class="mt-5 mb-3 text-muted text-center">&copy; 2019</p>
-            </form>
            
+           <Form noValidate validated={validated} onSubmit={handleOnSubmit} className="form-signin">
+               <div className="text-center mb-4">                 
+                 <img className="mb-4" src={logo} alt=""  height="80" />           
+                 <h1 className="h3 mb-3 font-weight-normal">Register Form</h1>                
+               </div>
+                {
+                  props.error &&  
+                  <Alert variant="danger">
+                    {props.error_message}
+                  </Alert>
+                }
+               <Form.Group>
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control type="text" placeholder="Enter Name" value={form.name} onChange={handlerOnChange} required id="name" name="name"/>
+                </Form.Group>
+
+                <Form.Group>
+                  <Form.Label>Username</Form.Label>
+                  <Form.Control type="text" placeholder="Enter Username" value={form.username} onChange={handlerOnChange} required id="username" name="username"/>
+                </Form.Group>
+                
+                <Form.Group>
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" placeholder="Enter E-mail" value={form.email} onChange={handlerOnChange} required id="email" name="email" />
+                </Form.Group>
+
+                <Form.Group>
+                  <Form.Label >Password</Form.Label>
+                  <Form.Control type="password" placeholder="Enter Password" value={form.password} onChange={handlerOnChange} required id="password" name="password"/>
+                </Form.Group>
+
+
+                <Button variant="primary" block size="lg" type="submit">
+                  {
+                    props.loading ? 
+                    <Spinner size="xs" bg="white" /> : 
+                    "Create Account"
+                  }
+                </Button>
+                <p className="mt-1">¿Ya posees una cuenta? <Link to="/">Imgresa acá</Link></p>
+
+                <p className="mt-5 mb-3 text-muted text-center">&copy; 2019</p>
+
+               </Form>
         </Fragment>
     );
 }
 
-// export default RegisterPage;
+
+const mapStateToProps = (state) => {
+  return state.registration
+}
+const mapDispatchToProps = dispatch => ({
+    register: payload => dispatch(registerAction(payload)),
+})
+
+const connectedRegisterPage = connect(mapStateToProps, mapDispatchToProps)(RegisterPage);
+export { connectedRegisterPage as RegisterPage };

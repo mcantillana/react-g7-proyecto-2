@@ -8,11 +8,10 @@ export const DashboardPage = props => {
         
         <Layout >
             <div className="text-center">
+                {/*<h1 className="h1 mt-5">Bienvenido</h1>*/}
                 <img src={Welcome} alt="Rick and Morty" className="img-fluid"/>
             </div>
         </Layout>
     
     );
 }
-
-// export default DashboardPage;

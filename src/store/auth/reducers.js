@@ -3,7 +3,7 @@ import {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
     LOGIN_FAILURE,
-    LOGOUT
+    LOGOUT,
 } from './const';
 
 // let user = JSON.parse(localStorage.getItem('user'));

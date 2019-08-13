@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
 import { NavLink, Link } from 'react-router-dom';
 import logo from '../../assets/images/Rick_and_Morty.svg';
@@ -6,26 +6,30 @@ import { FaSignOutAlt } from "react-icons/fa";
 
 export const Header = props => {
 
+    const [ user, setUser ] = useState({})
+
+    useEffect(() => {
+      if (localStorage.getItem('user')) {
+        setUser(JSON.parse(localStorage.getItem('user')));
+      }
+      
+    }, []);
+
     const styleActiveItem = {
       fontWeight: 'bold'
     }
-    // const isActive = (path, match, location) => !!(match || path === location.pathname);
 
     return(
         <Fragment>
            <header>
-
                 <Navbar bg="light" expand="lg" fixed="top" className="shadow-sm border-bottom ">
-                    <Container>
-                    
-                     {/*<Navbar.Brand href="#home">G7 - Poyecto 2</Navbar.Brand>*/}
+                    <Container>                    
                      <Link to="/dashboard">
                        <img
                          alt=""
                          src={logo}                       
                          className="d-inline-block align-top logo "
                        />
-
                      </Link>
 
                      <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -42,12 +46,12 @@ export const Header = props => {
                        <Navbar.Text>
                          <Dropdown>
                            <Dropdown.Toggle variant="default" id="dropdown-basic">
-                             Miguel Cantillana
+                             {user && user.username}
                            </Dropdown.Toggle>
 
                            <Dropdown.Menu>                             
                               <Dropdown.Divider />
-                              <Dropdown.Item href="#/"><FaSignOutAlt /> Salir</Dropdown.Item>
+                              <Dropdown.Item href="/"><FaSignOutAlt /> Salir</Dropdown.Item>
                            </Dropdown.Menu>
                          </Dropdown>
                        </Navbar.Text>

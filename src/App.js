@@ -9,7 +9,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import EpisodesPage from './pages/EpisodesPage';
 import CharacterPage from './pages/CharacterPage';
 import { SimilarTastesPage } from './pages/SimilarTastesPage';
-
+import { PrivateRoute } from './components/helpers/PrivateRoute';
 
 function App() {
   return (
@@ -18,10 +18,10 @@ function App() {
         <Switch>
           <Route exact path="/" component={LoginPage} />
           <Route exact path="/sign_in" component={RegisterPage} />
-          <Route exact path="/dashboard" component={DashboardPage} /> 
-          <Route exact path="/dashboard/characters" component={CharacterPage} /> 
-          <Route exact path="/dashboard/episodes" component={EpisodesPage} /> 
-          <Route exact path="/dashboard/similar-tastes" component={SimilarTastesPage} /> 
+          <PrivateRoute exact path="/dashboard" component={DashboardPage} />  
+          <PrivateRoute exact path="/dashboard/characters" component={CharacterPage} /> 
+          <PrivateRoute exact path="/dashboard/episodes" component={EpisodesPage} /> 
+          <PrivateRoute exact path="/dashboard/similar-tastes" component={EpisodesPage} /> 
         </Switch>  
     </BrowserRouter>
     </Provider>

@@ -1,22 +1,27 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { loginAction, logoutAction } from '../store/auth/action';
 import { connect } from 'react-redux';
-import { Alert } from 'react-bootstrap';
-
+import { Spinner } from '../components/Spinner';
+import {Form, Button,Alert } from 'react-bootstrap';
 import '../assets/scss/login.scss';
 import logo from '../assets/images/Rick_and_Morty.svg';
 
 const LoginPage = props => {
 
-    const [ redirect, setRedirect ] = useState(false);
 
+    const [ validated, setValidated ] = useState(false);
+    
     const [ form, setForm ] = useState({      
         username: '',
         password: '',
-        submitted: false
     });
 
+    useEffect(() => {
+      // reset login status
+      props.logout()
+
+    }, [])
     const handlerOnChange = ({target}) => {
         const { name, value } = target;
         setForm({
@@ -25,62 +30,63 @@ const LoginPage = props => {
         })
     }
 
-    const handlerOnSubmit = event => {
 
-      event.preventDefault();
-      setForm({...form, submitted: true })
-      const { username, password } = form;
-      if (username && password) {
-        props.login(username, password);
-      }
+    const handleOnSubmit = event => {
+        event.preventDefault();
 
-      // setRedirect(true);
+        const { currentTarget } = event;
+        const { username, password } = form;
+          
+        
+        
+        if (currentTarget.checkValidity()) {
+            console.log('success', password, username)
+
+            if (username && password) {
+                props.login(username, password);
+                // setValidated(false);
+            }
+
+        }
+        setValidated(true);
+
     }
 
-    if (redirect) {
+    if (props.loggedIn) {
       return <Redirect to="/dashboard" />
     }
 
+    // console.log(props)
     return(
         <Fragment>
-            <form className="form-signin " onSubmit={handlerOnSubmit} >
-              <div className="text-center mb-4">
-
-                <img className="mb-4" src={logo} alt=""  height="80" />           
-                
-                {/*<h1 className="h3 mb-3 font-weight-normal">Login Form</h1>                */}
-              </div>
-
-              {
-                props.error &&  
-                <Alert variant="danger">
-                  {props.error_message}
-                </Alert>
-              }
-              <div className={'form-label-group ' + (form.submitted && !form.username ? ' is-invalid' : '')}>
-                <input type="text" id="username" name="username" value={form.name} onChange={handlerOnChange} className="form-control" placeholder="Username"  />
-                <label htmlFor="username">Username</label>
-                {form.submitted && !form.username &&
-                    <div className="invalid-feedback">Username is required</div>
-                }
-              </div>
-
-              <div className={'form-label-group' + (form.submitted && !form.password ? ' is-invalid' : '')}>
-                <input type="password" id="password" name="password" value={form.password} onChange={handlerOnChange} className="form-control" placeholder="Password"  />
-                <label htmlFor="password">Password</label>
-                {form.submitted && !form.password &&
-                    <div className="invalid-feedback">Password is required</div>
-                }
-              </div>
-
-              <div className="checkbox mb-3">
-
-              </div>
-              <button className="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
-              <span>¿Todavía no tienes tu cuenta? <Link to="/sign_in">crear cuenta</Link></span>
-              <p className="mt-5 mb-3 text-muted text-center">&copy; 2019</p>
-            </form>
            
+           <Form noValidate validated={validated} onSubmit={handleOnSubmit} className="form-signin" method="POST">
+               <div className="text-center mb-4">
+                 <img className="mb-4" src={logo} alt=""  height="80" />                           
+               </div>
+                
+                {
+                  props.error &&  
+                  <Alert variant="danger">
+                    {props.error_message}
+                  </Alert>
+                }
+                <Form.Group>
+                   <Form.Label>Username</Form.Label>
+                   <Form.Control type="text" placeholder="Enter Username" required id="username" name="username" onChange={handlerOnChange}/>
+                 </Form.Group>
+
+                 <Form.Group>
+                    <Form.Label >Password</Form.Label>
+                    <Form.Control type="password" placeholder="Enter Password" required id="password" name="password" onChange={handlerOnChange}/>
+                  </Form.Group>
+
+                  <Button variant="primary" block size="lg" type="submit">
+                    {props.loading ? <Spinner size="xs" bg="white" /> : "Entrar"}
+                  </Button>                
+                  <p className="mt-1">¿Todavía no tienes tu cuenta? <Link to="/sign_in">crear cuenta</Link></p>
+                  <p className="mt-5 mb-3 text-muted text-center">&copy; 2019</p>
+               </Form>
         </Fragment>
     );
 }
@@ -91,7 +97,7 @@ const mapStateToProps = (state) => {
   return state.auth
 }
 const mapDispatchToProps = dispatch => ({
-    login: payload => dispatch(loginAction(payload)),
+    login: (username, password) => dispatch(loginAction(username, password)),
     logout: () => dispatch(logoutAction())
 })
 
