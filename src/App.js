@@ -21,7 +21,7 @@ function App() {
           <PrivateRoute exact path="/dashboard" component={DashboardPage} />  
           <PrivateRoute exact path="/dashboard/characters" component={CharacterPage} /> 
           <PrivateRoute exact path="/dashboard/episodes" component={EpisodesPage} /> 
-          <PrivateRoute exact path="/dashboard/similar-tastes" component={EpisodesPage} /> 
+          <PrivateRoute exact path="/dashboard/similar-tastes" component={SimilarTastesPage} /> 
         </Switch>  
     </BrowserRouter>
     </Provider>

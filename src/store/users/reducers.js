@@ -45,6 +45,28 @@ export default function reducer(state = INIT_STATE, action) {
             error: action.error
           };
 
+
+
+        case GETALL_REQUEST:
+          return {
+            ...state,
+            loading: true
+          };
+        case GETALL_SUCCESS:
+
+          return {
+            ...state,
+            loading: false,
+            users: action.payload
+          };
+        case GETALL_FAILURE:
+          return { 
+            ...state,
+            loading: false,
+            error: action.error
+          };
+
+
         case SET_FAVORITE_EPISODE_INIT:
             return {
               ...state, 
